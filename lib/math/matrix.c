@@ -1,9 +1,10 @@
+#include "matrix.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "ops.h"
-
-#include "matrix.h"
+#include "random.h"
 
 Dims dims(int h, int w)
 {
@@ -45,6 +46,21 @@ Matrix *ones_matrix(int h, int w)
     return default_matrix(h, w, 1);
 }
 
+Matrix *random_normal_matrix(int h, int w, float sd)
+{
+    Matrix *m = malloc(sizeof(Matrix));
+    m->dims = dims(h, w);
+
+    m->elems = malloc(sizeof(float) * w * h);
+
+    for (int i = 0; i < w * h; ++i)
+    {
+        m->elems[i] = irwin_hall() * sd;
+    }
+
+    return m;
+}
+
 Matrix *to_matrix(float *arr, int length, int h, int w)
 {
     if (w * h != length)
@@ -63,6 +79,19 @@ Matrix *to_matrix(float *arr, int length, int h, int w)
     }
 
     return m;
+}
+
+void apply_matrix(Matrix *m, float (*op)(float))
+{
+    for (int i = 0; i < m->dims.w * m->dims.h; ++i)
+    {
+        m->elems[i] = op(m->elems[i]);
+    }
+}
+
+void relu_matrix(Matrix *m)
+{
+    apply_matrix(m, &op_relu);
 }
 
 void apply_c_matrix(Matrix *m, float c, float (*op)(float, float))
@@ -96,6 +125,21 @@ void div_c_matrix(Matrix *m, float c)
 void neg_matrix(Matrix *m)
 {
     mul_c_matrix(m, -1);
+}
+
+void add_ones_row_matrix(Matrix *m)
+{
+    int old_h = m->dims.h;
+    int w = m->dims.w;
+    int new_h = old_h + 1;
+
+    m->elems = realloc(m->elems, sizeof(float) * new_h * w);
+    m->dims.h = new_h;
+
+    for (int j = 0; j < w; j++)
+    {
+        m->elems[rc_to_i(old_h, j, m->dims)] = 1.0f;
+    }
 }
 
 Matrix *trans_matrix(Matrix *m)

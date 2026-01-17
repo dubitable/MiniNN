@@ -1,32 +1,25 @@
+#include "lib/nn/layer.h"
 #include "lib/math/matrix.h"
 
 int main()
 {
-    float arr_a[] = {1.0, 2.5, 3.0, 4.3, 3.2, 1.2, 3.4, 6.1};
-    Matrix *a = to_matrix(arr_a, sizeof(arr_a) / sizeof(float), 2, 4);
+    int input_size = 4;
+    float x_arr[] = {2.0f, 3.0f, 4.0f, 5.0f};
 
-    if (!a)
-        return 1;
+    Matrix *x = to_matrix(x_arr, input_size, input_size, 1);
 
-    print_matrix(a);
+    print_matrix(x);
 
-    Matrix *b = trans_matrix(a);
+    Layer *l = init_layer(4, input_size);
 
-    if (!b)
-        return 1;
+    print_matrix(l->weights);
 
-    print_matrix(b);
+    Matrix *y = forward_layer(l, x);
 
-    Matrix *c = mul_matrix(a, b);
+    print_matrix(y);
 
-    if (!c)
-        return 1;
-
-    print_matrix(c);
-
-    free_matrix(a);
-    free_matrix(b);
-    free_matrix(c);
-
+    free_matrix(x);
+    free_matrix(y);
+    free_layer(l);
     return 0;
 }
