@@ -9,6 +9,9 @@ Network *init_network(int input_size)
 {
     Network *net = malloc(sizeof(Network));
 
+    if (!net)
+        return NULL;
+
     net->input_size = input_size;
     net->num_layers = 0;
     return net;

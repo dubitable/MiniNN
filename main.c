@@ -1,23 +1,33 @@
 #include "lib/math/matrix.h"
 #include "lib/nn/network.h"
+#include "lib/data/dataset.h"
+#include "lib/data/file.h"
+
+#include <stdlib.h>
+#include <time.h>
 
 int main()
 {
-    int input_size = 4;
-    float x_arr[] = {2.0f, 3.0f, 4.0f, 5.0f};
+    srand(time(NULL));
 
-    Matrix *x = to_matrix(x_arr, input_size, input_size, 1);
+    Dataset *parity = from_file_dataset("./examples/parity/parity.mini");
 
-    Network *net = init_network(input_size);
+    if (!parity)
+        return 1;
+
+    DataSample sample = sample_dataset(parity);
+
+    print_matrix(sample.x);
+    print_matrix(sample.y);
+
+    Network *net = init_network(parity->input_size);
 
     add_layer_network(net, 10);
     add_layer_network(net, 5);
 
     print_network(net);
 
-    forward_network(net, x);
-
-    free_matrix(x);
+    free_dataset(parity);
     free_network(net);
     return 0;
 }

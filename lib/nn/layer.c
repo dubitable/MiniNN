@@ -14,6 +14,10 @@ Matrix *he_weights(int size, int input_size)
 Layer *init_layer(int size, int input_size)
 {
     Layer *l = malloc(sizeof(Layer));
+
+    if (!l)
+        return NULL;
+
     Matrix *m = he_weights(size, input_size);
 
     l->weights = m;

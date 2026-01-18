@@ -21,12 +21,31 @@ int rc_to_i(int r, int c, Dims dims)
     return r * dims.w + c;
 }
 
-Matrix *default_matrix(int h, int w, float def)
+Matrix *init_matrix(int h, int w)
 {
     Matrix *m = malloc(sizeof(Matrix));
+
+    if (!m)
+        return NULL;
+
     m->dims = dims(h, w);
 
-    m->elems = malloc(sizeof(float) * w * h);
+    float *elems = malloc(sizeof(float) * w * h);
+
+    if (!elems)
+        return NULL;
+
+    m->elems = elems;
+
+    return m;
+}
+
+Matrix *default_matrix(int h, int w, float def)
+{
+    Matrix *m = init_matrix(h, w);
+
+    if (!m)
+        return NULL;
 
     for (int i = 0; i < w * h; ++i)
     {
@@ -48,10 +67,10 @@ Matrix *ones_matrix(int h, int w)
 
 Matrix *random_normal_matrix(int h, int w, float sd)
 {
-    Matrix *m = malloc(sizeof(Matrix));
-    m->dims = dims(h, w);
+    Matrix *m = init_matrix(h, w);
 
-    m->elems = malloc(sizeof(float) * w * h);
+    if (!m)
+        return NULL;
 
     for (int i = 0; i < w * h; ++i)
     {
@@ -69,9 +88,10 @@ Matrix *to_matrix(float *arr, int length, int h, int w)
         return NULL;
     }
 
-    Matrix *m = malloc(sizeof(Matrix));
-    m->dims = dims(h, w);
-    m->elems = malloc(sizeof(float) * length);
+    Matrix *m = init_matrix(h, w);
+
+    if (!m)
+        return NULL;
 
     for (int i = 0; i < length; ++i)
     {
