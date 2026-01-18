@@ -19,6 +19,7 @@ Matrix *ones_matrix(int, int);
 Matrix *random_normal_matrix(int, int, float);
 
 Matrix *to_matrix(float *, int, int, int);
+Matrix *copy_matrix(Matrix *);
 
 void apply_matrix(Matrix *m, float (*op)(float));
 void relu_matrix(Matrix *m);

@@ -23,12 +23,17 @@ Layer *init_layer(int size, int input_size)
     return l;
 }
 
-Matrix *forward_layer(Layer *l, Matrix *x)
+void forward_layer(Layer *l, Matrix *x)
 {
-    add_ones_row_matrix(x);
-    Matrix *a = mul_matrix(l->weights, x);
+    Matrix *x_b = copy_matrix(x);
+    add_ones_row_matrix(x_b);
+
+    Matrix *a = mul_matrix(l->weights, x_b);
     relu_matrix(a);
-    return a;
+
+    free_matrix(x_b);
+
+    l->out = a;
 }
 
 void print_layer(Layer *l)
@@ -39,5 +44,11 @@ void print_layer(Layer *l)
 void free_layer(Layer *l)
 {
     free_matrix(l->weights);
+
+    if (l->out)
+    {
+        free_matrix(l->out);
+    }
+
     free(l);
 }

@@ -9,11 +9,12 @@ typedef struct
     int input_size;
 
     Matrix *weights;
+    Matrix *out;
 } Layer;
 
 Layer *init_layer(int, int);
 
-Matrix *forward_layer(Layer *, Matrix *);
+void forward_layer(Layer *, Matrix *);
 
 void free_layer(Layer *);
 

@@ -1,5 +1,5 @@
-#include "lib/nn/layer.h"
 #include "lib/math/matrix.h"
+#include "lib/nn/network.h"
 
 int main()
 {
@@ -8,18 +8,16 @@ int main()
 
     Matrix *x = to_matrix(x_arr, input_size, input_size, 1);
 
-    print_matrix(x);
+    Network *net = init_network(input_size);
 
-    Layer *l = init_layer(4, input_size);
+    add_layer_network(net, 10);
+    add_layer_network(net, 5);
 
-    print_matrix(l->weights);
+    print_network(net);
 
-    Matrix *y = forward_layer(l, x);
-
-    print_matrix(y);
+    forward_network(net, x);
 
     free_matrix(x);
-    free_matrix(y);
-    free_layer(l);
+    free_network(net);
     return 0;
 }

@@ -81,6 +81,11 @@ Matrix *to_matrix(float *arr, int length, int h, int w)
     return m;
 }
 
+Matrix *copy_matrix(Matrix *m)
+{
+    return to_matrix(m->elems, m->dims.h * m->dims.w, m->dims.h, m->dims.w);
+}
+
 void apply_matrix(Matrix *m, float (*op)(float))
 {
     for (int i = 0; i < m->dims.w * m->dims.h; ++i)
