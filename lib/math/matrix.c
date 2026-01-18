@@ -106,6 +106,16 @@ Matrix *copy_matrix(Matrix *m)
     return to_matrix(m->elems, m->dims.h * m->dims.w, m->dims.h, m->dims.w);
 }
 
+float sum_matrix(Matrix *m)
+{
+    float out = 0;
+    for (int i = 0; i < m->dims.w * m->dims.h; ++i)
+    {
+        out += m->elems[i];
+    }
+    return out;
+}
+
 void apply_matrix(Matrix *m, float (*op)(float))
 {
     for (int i = 0; i < m->dims.w * m->dims.h; ++i)
@@ -117,6 +127,16 @@ void apply_matrix(Matrix *m, float (*op)(float))
 void relu_matrix(Matrix *m)
 {
     apply_matrix(m, &op_relu);
+}
+
+void reluder_matrix(Matrix *m)
+{
+    apply_matrix(m, &op_reluder);
+}
+
+void exp_matrix(Matrix *m)
+{
+    apply_matrix(m, &op_exp);
 }
 
 void apply_c_matrix(Matrix *m, float c, float (*op)(float, float))
@@ -167,6 +187,19 @@ void add_ones_row_matrix(Matrix *m)
     }
 }
 
+void remove_last_matrix(Matrix *m)
+{
+    int old_h = m->dims.h;
+    if (old_h == 0)
+        return;
+
+    int w = m->dims.w;
+    int new_h = old_h - 1;
+
+    m->elems = realloc(m->elems, sizeof(float) * new_h * w);
+    m->dims.h = new_h;
+}
+
 Matrix *trans_matrix(Matrix *m)
 {
     Matrix *out = zeros_matrix(m->dims.w, m->dims.h);
@@ -210,6 +243,45 @@ Matrix *mul_matrix(Matrix *a, Matrix *b)
     return out;
 }
 
+Matrix *apply_matrices(Matrix *a, Matrix *b, float (*op)(float, float))
+{
+    if (a->dims.w != b->dims.w || a->dims.h != b->dims.h)
+    {
+        printf("[ERR] incompatible dims, %d x %d != %d x %d\n", a->dims.h, a->dims.w, b->dims.h, b->dims.w);
+        return NULL;
+    }
+
+    Matrix *out = zeros_matrix(a->dims.h, b->dims.w);
+
+    for (int r = 0; r < a->dims.h; ++r)
+    {
+        for (int c = 0; c < a->dims.w; ++c)
+        {
+            float a_i = a->elems[rc_to_i(r, c, a->dims)];
+            float b_i = b->elems[rc_to_i(r, c, b->dims)];
+
+            out->elems[rc_to_i(r, c, out->dims)] += op(a_i, b_i);
+        }
+    }
+
+    return out;
+}
+
+Matrix *add_matrices(Matrix *a, Matrix *b)
+{
+    return apply_matrices(a, b, &op_add);
+}
+
+Matrix *sub_matrices(Matrix *a, Matrix *b)
+{
+    return apply_matrices(a, b, &op_add);
+}
+
+Matrix *mul_matrices(Matrix *a, Matrix *b)
+{
+    return apply_matrices(a, b, &op_mul);
+}
+
 void print_matrix_prec(Matrix *m, int prec)
 {
     for (int r = 0; r < m->dims.h; ++r)
@@ -233,6 +305,11 @@ void print_matrix(Matrix *m)
 
 void free_matrix(Matrix *m)
 {
+    if (!m)
+    {
+        return;
+    }
+
     free(m->elems);
     free(m);
 }

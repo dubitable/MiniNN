@@ -21,8 +21,12 @@ Matrix *random_normal_matrix(int, int, float);
 Matrix *to_matrix(float *, int, int, int);
 Matrix *copy_matrix(Matrix *);
 
-void apply_matrix(Matrix *m, float (*op)(float));
-void relu_matrix(Matrix *m);
+float sum_matrix(Matrix *);
+
+void apply_matrix(Matrix *, float (*)(float));
+void relu_matrix(Matrix *);
+void reluder_matrix(Matrix *);
+void exp_matrix(Matrix *);
 
 void apply_c_matrix(Matrix *, float, float (*)(float, float));
 void add_c_matrix(Matrix *, float);
@@ -32,6 +36,12 @@ void div_c_matrix(Matrix *, float);
 
 void neg_matrix(Matrix *);
 void add_ones_row_matrix(Matrix *);
+void remove_last_matrix(Matrix *);
+
+Matrix *apply_matrices(Matrix *, Matrix *, float (*)(float, float));
+Matrix *add_matrices(Matrix *, Matrix *);
+Matrix *sub_matrices(Matrix *, Matrix *);
+Matrix *mul_matrices(Matrix *, Matrix *);
 
 Matrix *trans_matrix(Matrix *);
 Matrix *mul_matrix(Matrix *, Matrix *);

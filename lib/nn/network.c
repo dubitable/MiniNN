@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 #include "layer.h"
+#include "../data/dataset.h"
+#include "loss.h"
 
 Network *init_network(int input_size)
 {
@@ -54,6 +56,19 @@ void forward_network(Network *net, Matrix *x)
     }
 }
 
+void backward_network(Network *net, Matrix *dL_dout, Matrix *input)
+{
+    Matrix *grad = dL_dout;
+
+    for (int i = net->num_layers - 1; i >= 0; i--)
+    {
+        Layer *l = net->layers[i];
+        Matrix *prev_out = (i == 0) ? input : net->layers[i - 1]->out;
+
+        grad = backward_layer(l, grad, prev_out);
+    }
+}
+
 void print_network(Network *net)
 {
     if (net->num_layers == 0)
@@ -69,6 +84,37 @@ void print_network(Network *net)
     }
 
     printf(" -> y\n");
+}
+
+void train_pass_network(Network *net, Dataset *dataset)
+{
+    for (int i = 0; i < dataset->count; ++i)
+    {
+        Matrix *input = dataset->x[i];
+
+        forward_network(net, input);
+
+        Matrix *logits = output_network(net);
+        Matrix *soft = softmax(logits);
+
+        Matrix *dL = sub_matrices(soft, dataset->y[i]);
+
+        backward_network(net, dL, input);
+
+        for (int j = 0; j < net->num_layers; j++)
+            update_layer(net->layers[j], net->lr);
+
+        free_matrix(soft);
+        free_matrix(dL);
+    }
+}
+
+void train_network(Network *net, Dataset *dataset, float epochs)
+{
+    for (int i = 0; i < epochs; ++i)
+    {
+        train_pass_network(net, dataset);
+    }
 }
 
 void free_network(Network *net)
