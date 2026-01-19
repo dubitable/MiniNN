@@ -22,17 +22,12 @@ float op_div(float a, float b)
     return a / b;
 }
 
-float op_relu(float a)
+float op_sq(float a)
 {
-    return a > 0 ? a : 0;
-}
-
-float op_reluder(float a)
-{
-    return a > 0 ? 1 : 0;
+    return powf(a, 2);
 }
 
 float op_exp(float a)
 {
-    return exp(a);
+    return expf(a);
 }

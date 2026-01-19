@@ -1,0 +1,10 @@
+#ifndef LAYERTYPE_H_INCLUDED
+#define LAYERTYPE_H_INCLUDED
+
+typedef enum
+{
+    LAYER_FULLYCONNECTED,
+    LAYER_ACTIVATION
+} LayerType;
+
+#endif

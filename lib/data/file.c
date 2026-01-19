@@ -48,7 +48,7 @@ Dataset *from_file_dataset(char *file_name)
             tok = strtok(NULL, delims);
         }
 
-        Matrix *x_mat = to_matrix(x, input_size, input_size, 1);
+        Matrix *x_mat = to_matrix(x, input_size, 1, input_size);
 
         float *y = malloc(sizeof(float) * output_size);
         if (!y)
@@ -60,7 +60,7 @@ Dataset *from_file_dataset(char *file_name)
             tok = strtok(NULL, delims);
         }
 
-        Matrix *y_mat = to_matrix(y, output_size, output_size, 1);
+        Matrix *y_mat = to_matrix(y, output_size, 1, output_size);
 
         add_to_dataset(dataset, x_mat, y_mat);
     }

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "../math/matrix.h"
+#include "../math/random.h"
 
 Dataset *init_dataset(int input_size, int output_size)
 {
@@ -50,4 +51,56 @@ void free_dataset(Dataset *dataset)
     free(dataset->y);
 
     free(dataset);
+}
+
+DatasetSplit *train_test_val(Dataset *dataset, float train_prop, float test_prop)
+{
+    int train_count = dataset->count * train_prop;
+    int test_count = dataset->count * test_prop;
+
+    int *order = generate_random_order(dataset->count);
+    int i = 0;
+
+    DatasetSplit *s = malloc(sizeof(DatasetSplit));
+    s->count = dataset->count;
+
+    Dataset *train = init_dataset(dataset->input_size, dataset->output_size);
+    for (int j = i; j < train_count; ++j)
+    {
+        add_to_dataset(train, dataset->x[order[i]], dataset->y[order[i]]);
+        i++;
+    }
+
+    s->train = train;
+
+    Dataset *test = init_dataset(dataset->input_size, dataset->output_size);
+    for (int j = i; j < test_count + train_count; ++j)
+    {
+        add_to_dataset(test, dataset->x[order[i]], dataset->y[order[i]]);
+        i++;
+    }
+
+    s->test = test;
+
+    Dataset *val = init_dataset(dataset->input_size, dataset->output_size);
+    for (int j = i; j < dataset->count; ++j)
+    {
+        add_to_dataset(val, dataset->x[order[i]], dataset->y[order[i]]);
+        i++;
+    }
+
+    s->val = val;
+
+    free(dataset);
+    free(order);
+
+    return s;
+}
+
+void free_datasetsplit(DatasetSplit *split)
+{
+    free_dataset(split->train);
+    free_dataset(split->test);
+    free_dataset(split->val);
+    free(split);
 }

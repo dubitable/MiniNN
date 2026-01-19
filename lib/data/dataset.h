@@ -21,11 +21,23 @@ typedef struct
     Matrix *y;
 } DataSample;
 
+typedef struct
+{
+    Dataset *train;
+    Dataset *val;
+    Dataset *test;
+
+    int count;
+} DatasetSplit;
+
 Dataset *init_dataset(int, int);
 DataSample sample_dataset(Dataset *);
+
+DatasetSplit *train_test_val(Dataset *, float, float);
 
 void add_to_dataset(Dataset *, Matrix *, Matrix *);
 
 void free_dataset(Dataset *);
+void free_datasetsplit(DatasetSplit *);
 
 #endif

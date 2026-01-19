@@ -2,22 +2,21 @@
 #define LAYER_H_INCLUDED
 
 #include "../math/matrix.h"
+#include "layers/fclayer.h"
+#include "layers/alayer.h"
 
 typedef struct
 {
-    int size;
-    int input_size;
-
-    Matrix *weights;
+    Matrix *in;
     Matrix *out;
-    Matrix *grad_weights;
+    LayerType type;
 } Layer;
 
-Layer *init_layer(int, int);
+FCLayer *init_fc_layer(int input_size, int output_size);
+ALayer *init_a_layer(void (*a)(Matrix *), void (*a_prime)(Matrix *));
 
-void forward_layer(Layer *, Matrix *);
-Matrix *backward_layer(Layer *, Matrix *, Matrix *);
-void update_layer(Layer *, float);
+void forward_layer(Layer *l, Matrix *x);
+Matrix *backward_layer(Layer *, Matrix *, float);
 
 void free_layer(Layer *);
 

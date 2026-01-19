@@ -1,8 +1,9 @@
-#include "lib/math/matrix.h"
 #include "lib/nn/network.h"
+#include "lib/nn/layer.h"
 #include "lib/data/dataset.h"
 #include "lib/data/file.h"
-#include "lib/nn/loss.h"
+#include "lib/metrics/activation.h"
+#include "lib/metrics/loss.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -12,43 +13,32 @@ int main()
 {
     srand(time(NULL));
 
-    Dataset *parity = from_file_dataset("./examples/parity/parity.mini");
+    Dataset *xor = from_file_dataset("./examples/xor/xor.mini");
 
-    if (!parity)
-        return 1;
+    DatasetSplit *split = train_test_val(xor, 0.8, 0.1);
 
-    Network *net = init_network(parity->input_size);
+    NetworkOptions options = {
+        .input_size = split->train->input_size,
+        .output_size = split->train->output_size,
+        .lr = 0.001};
 
-    add_layer_network(net, 50);
-    add_layer_network(net, 100);
-    add_layer_network(net, parity->output_size);
+    DataSample sample = sample_dataset(split->train);
 
-    net->lr = 0.01;
+    print_matrix(sample.x);
+    print_matrix(sample.y);
 
-    print_network(net);
+    FCLayer *l = init_fc_layer(2, 1);
+    print_matrix(l->weights);
+    print_matrix(l->bias);
 
-    train_network(net, parity, 50);
+    forward_layer((Layer *)l, sample.x);
+    print_matrix(l->out);
 
-    for (int i = 0; i < 5; ++i)
-    {
-        DataSample sample = sample_dataset(parity);
+    backward_layer((Layer *)l, mse_prime(sample.y, l->out), 1);
+    print_matrix(l->weights);
 
-        forward_network(net, sample.x);
+    free_datasetsplit(split);
+    free_layer((Layer *)l);
 
-        Matrix *soft = softmax(output_network(net));
-
-        if (soft->elems[0] > soft->elems[1])
-        {
-            printf("%f is even with confidence %.2f%%\n", sample.x->elems[0], soft->elems[0] * 100);
-        }
-        else
-        {
-            printf("%f is odd with confidence %.2f%%\n", sample.x->elems[0], soft->elems[1] * 100);
-        }
-        free_matrix(soft);
-    }
-
-    free_dataset(parity);
-    free_network(net);
     return 0;
 }

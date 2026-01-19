@@ -5,100 +5,63 @@
 #include <math.h>
 
 #include "../math/matrix.h"
-
-Matrix *he_weights(int size, int input_size)
-{
-    return random_normal_matrix(size, input_size + 1, sqrt(2.0 / input_size));
-}
-
-Layer *init_layer(int size, int input_size)
-{
-    Layer *l = malloc(sizeof(Layer));
-
-    if (!l)
-        return NULL;
-
-    Matrix *m = he_weights(size, input_size);
-
-    l->weights = m;
-    l->size = size;
-    l->input_size = input_size;
-
-    return l;
-}
+#include "layers/fclayer.h"
 
 void forward_layer(Layer *l, Matrix *x)
 {
-    Matrix *x_b = copy_matrix(x);
-    add_ones_row_matrix(x_b);
-
-    Matrix *a = mul_matrix(l->weights, x_b);
-    relu_matrix(a);
-
-    free_matrix(x_b);
-
-    l->out = a;
+    switch (l->type)
+    {
+    case LAYER_FULLYCONNECTED:
+        forward_fc_layer((FCLayer *)l, x);
+        break;
+    case LAYER_ACTIVATION:
+        forward_a_layer((ALayer *)l, x);
+        break;
+    default:
+        break;
+    }
 }
 
-Matrix *backward_layer(Layer *layer, Matrix *dL_dout, Matrix *input)
+Matrix *backward_layer(Layer *l, Matrix *output_error, float lr)
 {
-    Matrix *x_b = copy_matrix(input);
-    add_ones_row_matrix(x_b);
+    if (!l->out)
+    {
+        printf("[ERR] Not forward propagated yet.\n");
+        return NULL;
+    }
 
-    Matrix *relu_mask = copy_matrix(layer->out);
-    reluder_matrix(relu_mask);
+    switch (l->type)
+    {
+    case LAYER_FULLYCONNECTED:
+        return backward_fc_layer((FCLayer *)l, output_error, lr);
 
-    Matrix *dL_da = mul_matrices(dL_dout, relu_mask);
-    Matrix *x_b_t = trans_matrix(x_b);
+    case LAYER_ACTIVATION:
+        return backward_a_layer((ALayer *)l, output_error);
 
-    free_matrix(layer->grad_weights);
-    free_matrix(x_b);
+    default:
+        break;
+    }
 
-    layer->grad_weights = mul_matrix(dL_dout, x_b_t);
-
-    Matrix *weights_t = trans_matrix(layer->weights);
-    Matrix *dL_dx = mul_matrix(weights_t, dL_da);
-
-    remove_last_matrix(dL_dx);
-
-    free_matrix(x_b_t);
-    free_matrix(weights_t);
-    free_matrix(relu_mask);
-
-    return dL_dx;
-}
-
-void update_layer(Layer *layer, float lr)
-{
-    Matrix *grad_weights = copy_matrix(layer->grad_weights);
-    mul_c_matrix(grad_weights, lr);
-
-    Matrix *new_weights = sub_matrices(layer->weights, grad_weights);
-
-    free_matrix(layer->weights);
-    free_matrix(grad_weights);
-
-    layer->weights = new_weights;
+    return NULL;
 }
 
 void print_layer(Layer *l)
 {
-    printf("(%d, %d)\n", l->size, l->input_size + 1);
 }
 
 void free_layer(Layer *l)
 {
-    free_matrix(l->weights);
-
-    if (l->out)
+    switch (l->type)
     {
-        free_matrix(l->out);
-    }
+    case LAYER_FULLYCONNECTED:
+        free_fc_layer((FCLayer *)l);
+        break;
 
-    if (l->grad_weights)
-    {
-        free_matrix(l->grad_weights);
-    }
+    case LAYER_ACTIVATION:
+        free_a_layer((ALayer *)l);
+        break;
 
-    free(l);
+    default:
+        break;
+    }
 }

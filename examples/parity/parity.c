@@ -1,12 +1,20 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int main()
+const int count_default = 1000;
+
+int main(int argc, char **argv)
 {
     FILE *fptr;
 
     fptr = fopen("parity.mini", "w");
 
-    int count = 100;
+    int count = count_default;
+
+    if (argc == 2)
+    {
+        count = atoi(argv[1]);
+    }
 
     fprintf(fptr, "1,2\n");
 

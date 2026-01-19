@@ -22,10 +22,10 @@ Matrix *to_matrix(float *, int, int, int);
 Matrix *copy_matrix(Matrix *);
 
 float sum_matrix(Matrix *);
+float max_matrix(Matrix *);
 
 void apply_matrix(Matrix *, float (*)(float));
-void relu_matrix(Matrix *);
-void reluder_matrix(Matrix *);
+void sq_matrix(Matrix *m);
 void exp_matrix(Matrix *);
 
 void apply_c_matrix(Matrix *, float, float (*)(float, float));

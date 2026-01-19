@@ -116,6 +116,19 @@ float sum_matrix(Matrix *m)
     return out;
 }
 
+float max_matrix(Matrix *m)
+{
+    float max_val = m->elems[0];
+    for (int i = 1; i < m->dims.w * m->dims.h; ++i)
+    {
+        if (m->elems[i] > max_val)
+        {
+            max_val = m->elems[i];
+        }
+    }
+    return max_val;
+}
+
 void apply_matrix(Matrix *m, float (*op)(float))
 {
     for (int i = 0; i < m->dims.w * m->dims.h; ++i)
@@ -124,14 +137,9 @@ void apply_matrix(Matrix *m, float (*op)(float))
     }
 }
 
-void relu_matrix(Matrix *m)
+void sq_matrix(Matrix *m)
 {
-    apply_matrix(m, &op_relu);
-}
-
-void reluder_matrix(Matrix *m)
-{
-    apply_matrix(m, &op_reluder);
+    apply_matrix(m, &op_sq);
 }
 
 void exp_matrix(Matrix *m)
@@ -189,15 +197,7 @@ void add_ones_row_matrix(Matrix *m)
 
 void remove_last_matrix(Matrix *m)
 {
-    int old_h = m->dims.h;
-    if (old_h == 0)
-        return;
-
-    int w = m->dims.w;
-    int new_h = old_h - 1;
-
-    m->elems = realloc(m->elems, sizeof(float) * new_h * w);
-    m->dims.h = new_h;
+    m->dims.w--;
 }
 
 Matrix *trans_matrix(Matrix *m)
@@ -306,9 +306,7 @@ void print_matrix(Matrix *m)
 void free_matrix(Matrix *m)
 {
     if (!m)
-    {
         return;
-    }
 
     free(m->elems);
     free(m);
