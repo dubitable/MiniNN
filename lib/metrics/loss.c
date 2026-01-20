@@ -5,6 +5,8 @@
 
 #include "../math/matrix.h"
 
+char *loss_names[] = {"MSE"};
+
 float mse_loss(Matrix *y_true, Matrix *y_est)
 {
     Matrix *diff = sub_matrices(y_est, y_true);

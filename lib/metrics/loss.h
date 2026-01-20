@@ -11,6 +11,8 @@ typedef enum
     LOSS_MSE
 } Loss;
 
+extern char *loss_names[];
+
 typedef struct
 {
     float (*loss)(Matrix *, Matrix *);

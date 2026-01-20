@@ -14,6 +14,7 @@ typedef struct
     int output_size;
 
     LossFns loss;
+    Loss loss_type;
 } Network;
 
 Network *init_network(int, int, Loss);

@@ -29,6 +29,8 @@ int main()
 
     add_fc_layer_network(net, 100);
     add_a_layer_network(net, ACTIVATION_RELU);
+    add_fc_layer_network(net, 100);
+    add_a_layer_network(net, ACTIVATION_RELU);
     add_fc_layer_network(net, output_size);
 
     int result = check_network(net, split);

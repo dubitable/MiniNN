@@ -7,6 +7,7 @@
 #include "layers/fclayer.h"
 #include "layers/alayer.h"
 #include "../data/dataset.h"
+#include "../metrics/loss.h"
 
 Network *init_network(int input_size, int output_size, Loss loss)
 {
@@ -22,6 +23,7 @@ Network *init_network(int input_size, int output_size, Loss loss)
     net->layers = NULL;
 
     net->loss = use_loss(loss);
+    net->loss_type = loss;
 
     return net;
 }
@@ -165,6 +167,16 @@ int check_network(Network *net, DatasetSplit *split)
     return 1;
 }
 
+int num_params_network(Network *net)
+{
+    int num_params = 0;
+    for (int i = 0; i < net->output_size; ++i)
+    {
+        num_params += num_params_layer(net->layers[i]);
+    }
+    return num_params;
+}
+
 void print_network(Network *net)
 {
     if (net->num_layers == 0)
@@ -173,7 +185,11 @@ void print_network(Network *net)
         return;
     }
 
-    printf("x -> ");
+    int params = num_params_network(net);
+    printf("Network Info\n");
+    printf("|- %d params (~%d B)\n", params, (int)(params * sizeof(float)));
+    printf("|- Loss function: %s\n", loss_names[net->loss_type]);
+    printf("|- x(%d, %d) -> ", 1, net->input_size);
     print_layer(net->layers[0]);
     for (int i = 1; i < net->num_layers; ++i)
     {
@@ -181,7 +197,7 @@ void print_network(Network *net)
         print_layer(net->layers[i]);
     }
 
-    printf(" -> y\n");
+    printf(" -> y(%d, %d)\n", net->output_size, 1);
 }
 
 void free_network(Network *net)

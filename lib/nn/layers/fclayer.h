@@ -23,6 +23,7 @@ void forward_fc_layer(FCLayer *, Matrix *);
 Matrix *backward_fc_layer(FCLayer *, Matrix *, float);
 
 void print_fc_layer();
+int num_params_fc_layer(FCLayer *);
 
 void free_fc_layer(FCLayer *);
 

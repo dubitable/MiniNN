@@ -63,6 +63,23 @@ void print_layer(Layer *l)
     printf("(%d, %d)", l->input_size, l->output_size);
 }
 
+int num_params_layer(Layer *l)
+{
+    switch (l->type)
+    {
+    case LAYER_FULLYCONNECTED:
+        return num_params_fc_layer((FCLayer *)l);
+        break;
+
+    case LAYER_ACTIVATION:
+        return 0;
+        break;
+
+    default:
+        break;
+    }
+}
+
 void free_layer(Layer *l)
 {
     switch (l->type)

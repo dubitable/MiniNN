@@ -81,6 +81,11 @@ void print_fc_layer()
     printf("FC");
 }
 
+int num_params_fc_layer(FCLayer *l)
+{
+    return (l->weights->dims.h * l->weights->dims.w) + (l->bias->dims.h * l->bias->dims.w);
+}
+
 void free_fc_layer(FCLayer *l)
 {
     free_matrix(l->weights);

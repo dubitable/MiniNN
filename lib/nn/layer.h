@@ -15,10 +15,11 @@ typedef struct
     int output_size;
 } Layer;
 
-void forward_layer(Layer *l, Matrix *x);
+void forward_layer(Layer *, Matrix *);
 Matrix *backward_layer(Layer *, Matrix *, float);
 
-void print_layer(Layer *l);
+void print_layer(Layer *);
+int num_params_layer(Layer *);
 
 void free_layer(Layer *);
 
