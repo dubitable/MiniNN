@@ -10,13 +10,15 @@ typedef struct
     Matrix *in;
     Matrix *out;
     LayerType type;
-} Layer;
 
-FCLayer *init_fc_layer(int input_size, int output_size);
-ALayer *init_a_layer(void (*a)(Matrix *), void (*a_prime)(Matrix *));
+    int input_size;
+    int output_size;
+} Layer;
 
 void forward_layer(Layer *l, Matrix *x);
 Matrix *backward_layer(Layer *, Matrix *, float);
+
+void print_layer(Layer *l);
 
 void free_layer(Layer *);
 

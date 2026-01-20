@@ -6,4 +6,17 @@
 void relu_activation(Matrix *);
 void relu_prime_activation(Matrix *);
 
+typedef enum
+{
+    ACTIVATION_RELU
+} Activation;
+
+typedef struct
+{
+    void (*a)(Matrix *);
+    void (*a_prime)(Matrix *);
+} ActivationFns;
+
+ActivationFns use_activation(Activation);
+
 #endif

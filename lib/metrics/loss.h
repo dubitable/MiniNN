@@ -3,7 +3,20 @@
 
 #include "../math/matrix.h"
 
-float mse(Matrix *y_true, Matrix *y_est);
-Matrix *mse_prime(Matrix *y_true, Matrix *y_est);
+float mse(Matrix *, Matrix *);
+Matrix *mse_prime(Matrix *, Matrix *);
+
+typedef enum
+{
+    LOSS_MSE
+} Loss;
+
+typedef struct
+{
+    float (*loss)(Matrix *, Matrix *);
+    Matrix *(*loss_prime)(Matrix *, Matrix *);
+} LossFns;
+
+LossFns use_loss(Loss);
 
 #endif

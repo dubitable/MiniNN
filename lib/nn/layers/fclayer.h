@@ -10,17 +10,19 @@ typedef struct
     Matrix *out;
     LayerType type;
 
-    Matrix *weights;
-    Matrix *bias;
-
     int input_size;
     int output_size;
+
+    Matrix *weights;
+    Matrix *bias;
 } FCLayer;
 
 FCLayer *init_fc_layer(int, int);
 
 void forward_fc_layer(FCLayer *, Matrix *);
 Matrix *backward_fc_layer(FCLayer *, Matrix *, float);
+
+void print_fc_layer();
 
 void free_fc_layer(FCLayer *);
 

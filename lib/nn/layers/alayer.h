@@ -2,6 +2,7 @@
 #define ALAYER_H_INCLUDED
 
 #include "../../math/matrix.h"
+#include "../../metrics/activation.h"
 #include "layertype.h"
 
 typedef struct
@@ -10,14 +11,19 @@ typedef struct
     Matrix *out;
     LayerType type;
 
-    void (*activation)(Matrix *);
-    void (*activation_prime)(Matrix *);
+    int input_size;
+    int output_size;
+
+    Activation activation_type;
+    ActivationFns activation;
 } ALayer;
 
-ALayer *init_a_layer(void (*a)(Matrix *), void (*a_prime)(Matrix *));
+ALayer *init_a_layer(int, int, Activation);
 
 void forward_a_layer(ALayer *, Matrix *);
 Matrix *backward_a_layer(ALayer *, Matrix *);
+
+void print_a_layer(ALayer *);
 
 void free_a_layer(ALayer *);
 

@@ -47,6 +47,7 @@ Matrix *trans_matrix(Matrix *);
 Matrix *mul_matrix(Matrix *, Matrix *);
 
 void print_matrix(Matrix *m);
+void print_matrix_prec(Matrix *, int);
 
 void free_matrix(Matrix *);
 

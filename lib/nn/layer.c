@@ -47,6 +47,20 @@ Matrix *backward_layer(Layer *l, Matrix *output_error, float lr)
 
 void print_layer(Layer *l)
 {
+    switch (l->type)
+    {
+    case LAYER_FULLYCONNECTED:
+        print_fc_layer();
+        break;
+
+    case LAYER_ACTIVATION:
+        print_a_layer((ALayer *)l);
+        break;
+
+    default:
+        break;
+    }
+    printf("(%d, %d)", l->input_size, l->output_size);
 }
 
 void free_layer(Layer *l)

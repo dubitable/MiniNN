@@ -1,5 +1,7 @@
 #include "activation.h"
 
+#include <stdlib.h>
+
 #include "../math/matrix.h"
 
 float op_relu(float a)
@@ -20,4 +22,24 @@ void relu_activation(Matrix *m)
 void relu_prime_activation(Matrix *m)
 {
     apply_matrix(m, &op_relu_prime);
+}
+
+ActivationFns use_activation(Activation a)
+{
+    ActivationFns out;
+
+    switch (a)
+    {
+    case ACTIVATION_RELU:
+        out.a = &relu_activation;
+        out.a_prime = &relu_prime_activation;
+        break;
+
+    default:
+        out.a = NULL;
+        out.a_prime = NULL;
+        break;
+    }
+
+    return out;
 }

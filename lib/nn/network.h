@@ -3,34 +3,32 @@
 
 #include "layer.h"
 #include "../data/dataset.h"
-
-typedef struct
-{
-    float lr;
-    int input_size;
-    int output_size;
-
-    float (*loss)(Matrix *, Matrix *);
-} NetworkOptions;
+#include "../metrics/loss.h"
 
 typedef struct
 {
     Layer **layers;
     int num_layers;
 
-    NetworkOptions *options;
+    int input_size;
+    int output_size;
+
+    LossFns loss;
 } Network;
 
-Network *init_network(NetworkOptions *);
-void add_layer_network(Network *, int);
-
-void train_network(Network *net, Dataset *dataset);
-void fit_network(Network *net, DatasetSplit *split, float epochs);
-
-void forward_network(Network *, Matrix *);
-Matrix *output_network(Network *);
+Network *init_network(int, int, Loss);
 
 void print_network(Network *);
 void free_network(Network *);
+
+int check_network(Network *, DatasetSplit *);
+
+void add_fc_layer_network(Network *, int);
+void add_a_layer_network(Network *, Activation);
+
+void forward_network(Network *, Matrix *);
+void backward_network(Network *, Matrix *, float);
+
+void fit_network(Network *, DatasetSplit *, float, float);
 
 #endif

@@ -274,7 +274,7 @@ Matrix *add_matrices(Matrix *a, Matrix *b)
 
 Matrix *sub_matrices(Matrix *a, Matrix *b)
 {
-    return apply_matrices(a, b, &op_add);
+    return apply_matrices(a, b, &op_sub);
 }
 
 Matrix *mul_matrices(Matrix *a, Matrix *b)
