@@ -18,12 +18,12 @@ int main()
 {
     srand(20);
 
-    Dataset *xor = from_file_dataset("./examples/xor/xor.mini");
+    Dataset *dataset = from_file_dataset("./examples/xor/xor.mini");
 
-    int input_size = xor->input_size;
-    int output_size = xor->output_size;
+    int input_size = dataset->input_size;
+    int output_size = dataset->output_size;
 
-    DatasetSplit *split = train_test_val(xor, 0.8, 0.1);
+    DatasetSplit *split = train_test_val(dataset, 0.8, 0.1, 1);
 
     Network *net = init_network(input_size, output_size, LOSS_MSE);
 
@@ -40,27 +40,7 @@ int main()
 
     print_network(net);
 
-    fit_network(net, split, 10, 0.001f);
-
-    Matrix *test1 = to_matrix((float[]){0, 0}, 2, 1, 2);
-    forward_network(net, test1);
-    print_matrix(net->layers[net->num_layers - 1]->out);
-    free_matrix(test1);
-
-    Matrix *test2 = to_matrix((float[]){0, 1}, 2, 1, 2);
-    forward_network(net, test2);
-    print_matrix(net->layers[net->num_layers - 1]->out);
-    free_matrix(test2);
-
-    Matrix *test3 = to_matrix((float[]){1, 0}, 2, 1, 2);
-    forward_network(net, test3);
-    print_matrix(net->layers[net->num_layers - 1]->out);
-    free_matrix(test3);
-
-    Matrix *test4 = to_matrix((float[]){1, 1}, 2, 1, 2);
-    forward_network(net, test4);
-    print_matrix(net->layers[net->num_layers - 1]->out);
-    free_matrix(test4);
+    fit_network(net, split, 20, 0.001f, 1);
 
     free_datasetsplit(split);
     free_network(net);

@@ -35,8 +35,9 @@ void mul_c_matrix(Matrix *, float);
 void div_c_matrix(Matrix *, float);
 
 void neg_matrix(Matrix *);
+
 void add_ones_row_matrix(Matrix *);
-void remove_last_matrix(Matrix *);
+void append_row_matrix(Matrix *, Matrix *);
 
 Matrix *apply_matrices(Matrix *, Matrix *, float (*)(float, float));
 Matrix *add_matrices(Matrix *, Matrix *);
@@ -44,9 +45,10 @@ Matrix *sub_matrices(Matrix *, Matrix *);
 Matrix *mul_matrices(Matrix *, Matrix *);
 
 Matrix *trans_matrix(Matrix *);
+Matrix *sum_cols_matrix(Matrix *);
 Matrix *mul_matrix(Matrix *, Matrix *);
 
-void print_matrix(Matrix *m);
+void print_matrix(Matrix *);
 void print_matrix_prec(Matrix *, int);
 
 void free_matrix(Matrix *);

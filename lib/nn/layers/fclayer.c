@@ -41,8 +41,14 @@ void forward_fc_layer(FCLayer *l, Matrix *x)
     l->in = copy_matrix(x);
 
     Matrix *mulled = mul_matrix(x, l->weights);
-    l->out = add_matrices(mulled, l->bias);
 
+    Matrix *ones = ones_matrix(mulled->dims.h, 1);
+    Matrix *bias = mul_matrix(ones, l->bias);
+
+    l->out = add_matrices(mulled, bias);
+
+    free_matrix(ones);
+    free_matrix(bias);
     free_matrix(mulled);
 }
 
@@ -50,6 +56,7 @@ Matrix *backward_fc_layer(FCLayer *l, Matrix *output_error, float lr)
 {
     Matrix *weights_tr = trans_matrix(l->weights);
     Matrix *in_error = mul_matrix(output_error, weights_tr);
+
     free_matrix(weights_tr);
 
     Matrix *input_tr = trans_matrix(l->in);
@@ -60,7 +67,7 @@ Matrix *backward_fc_layer(FCLayer *l, Matrix *output_error, float lr)
 
     Matrix *new_weights = sub_matrices(l->weights, weights_error);
 
-    Matrix *bias_error = copy_matrix(output_error);
+    Matrix *bias_error = sum_cols_matrix(output_error);
     mul_c_matrix(bias_error, lr);
     Matrix *new_bias = sub_matrices(l->bias, bias_error);
 

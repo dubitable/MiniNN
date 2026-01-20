@@ -33,7 +33,7 @@ typedef struct
 Dataset *init_dataset(int, int);
 DataSample sample_dataset(Dataset *);
 
-DatasetSplit *train_test_val(Dataset *, float, float);
+DatasetSplit *train_test_val(Dataset *, float, float, int);
 
 void add_to_dataset(Dataset *, Matrix *, Matrix *);
 

@@ -8,6 +8,7 @@
 #include "layers/alayer.h"
 #include "../data/dataset.h"
 #include "../metrics/loss.h"
+#include "../math/random.h"
 
 Network *init_network(int input_size, int output_size, Loss loss)
 {
@@ -93,16 +94,54 @@ void backward_network(Network *net, Matrix *y_true, float lr)
     }
 }
 
-void train_network(Network *net, Dataset *dataset, float lr)
+typedef struct
 {
-    for (int i = 0; i < dataset->count; ++i)
+    Matrix *batch_x;
+    Matrix *batch_y;
+} Batch;
+
+Batch make_batch(Dataset *dataset, int start, int end, int *order)
+{
+    Matrix *batch_x = copy_matrix(dataset->x[order[start]]);
+    Matrix *batch_y = copy_matrix(dataset->y[order[start]]);
+
+    while (start < end)
     {
-        forward_network(net, dataset->x[i]);
-        backward_network(net, dataset->y[i], lr);
+        ++start;
+        append_row_matrix(batch_x, dataset->x[order[start]]);
+        append_row_matrix(batch_y, dataset->y[order[start]]);
     }
+
+    return (Batch){
+        .batch_x = batch_x,
+        .batch_y = batch_y};
 }
 
-float get_risk(Network *net, Dataset *dataset)
+void train_batch_network(Network *net, Dataset *dataset, float lr, int batch_size)
+{
+    int *order = generate_order(dataset->count);
+    shuffle(order, dataset->count);
+
+    int batches = dataset->count / batch_size;
+
+    int i = 0;
+    for (int b = 0; b < batches; ++b)
+    {
+        Batch batch = make_batch(dataset, i, ((b + 1) * batch_size - 1), order);
+
+        forward_network(net, batch.batch_x);
+        backward_network(net, batch.batch_y, lr);
+
+        free_matrix(batch.batch_x);
+        free_matrix(batch.batch_y);
+
+        i = (b + 1) * batch_size;
+    }
+
+    free(order);
+}
+
+float risk_network(Network *net, Dataset *dataset)
 {
     float risk = 0;
     for (int i = 0; i < dataset->count; ++i)
@@ -115,21 +154,21 @@ float get_risk(Network *net, Dataset *dataset)
     return risk / dataset->count;
 }
 
-void fit_network(Network *net, DatasetSplit *split, float epochs, float lr)
+void fit_network(Network *net, DatasetSplit *split, float epochs, float lr, int batch_size)
 {
     for (int i = 0; i < epochs; ++i)
     {
-        train_network(net, split->train, lr);
+        train_batch_network(net, split->train, lr, batch_size);
 
-        float train_risk = get_risk(net, split->train);
-        float val_risk = get_risk(net, split->val);
+        float train_risk = risk_network(net, split->train);
+        float val_risk = risk_network(net, split->val);
 
         printf("Epoch %d | train risk = %.3f | val risk = %.3f\n", i + 1, train_risk, val_risk);
 
         fflush(stdout);
     }
 
-    printf("Summary | test risk = %.3f\n", get_risk(net, split->test));
+    printf("Summary | test risk = %.3f\n", risk_network(net, split->test));
 }
 
 int check_network(Network *net, DatasetSplit *split)
@@ -186,10 +225,13 @@ void print_network(Network *net)
     }
 
     int params = num_params_network(net);
-    printf("Network Info\n");
+
+    printf("-----------------\n");
+    printf("| Network Info\n");
     printf("|- %d params (~%d B)\n", params, (int)(params * sizeof(float)));
-    printf("|- Loss function: %s\n", loss_names[net->loss_type]);
-    printf("|- x(%d, %d) -> ", 1, net->input_size);
+    printf("|- loss: %s\n", loss_names[net->loss_type]);
+    printf("|- x -> ");
+
     print_layer(net->layers[0]);
     for (int i = 1; i < net->num_layers; ++i)
     {
@@ -197,7 +239,8 @@ void print_network(Network *net)
         print_layer(net->layers[i]);
     }
 
-    printf(" -> y(%d, %d)\n", net->output_size, 1);
+    printf(" -> y\n");
+    printf("-----------------\n");
 }
 
 void free_network(Network *net)

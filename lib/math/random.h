@@ -2,6 +2,7 @@
 #define RANDOM_H_INCLUDED
 
 float irwin_hall();
-int *generate_random_order(int);
+int *generate_order(int);
+void shuffle(int *, int);
 
 #endif

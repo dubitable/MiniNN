@@ -189,15 +189,32 @@ void add_ones_row_matrix(Matrix *m)
     m->elems = realloc(m->elems, sizeof(float) * new_h * w);
     m->dims.h = new_h;
 
-    for (int j = 0; j < w; j++)
+    for (int j = 0; j < w; ++j)
     {
         m->elems[rc_to_i(old_h, j, m->dims)] = 1.0f;
     }
 }
 
-void remove_last_matrix(Matrix *m)
+void append_row_matrix(Matrix *a, Matrix *b)
 {
-    m->dims.w--;
+    if (a->dims.w != b->dims.w)
+    {
+        return;
+    }
+
+    int w = a->dims.w;
+    int old_h = a->dims.h;
+    a->dims.h = old_h + b->dims.h;
+
+    a->elems = realloc(a->elems, sizeof(float) * a->dims.h * w);
+
+    for (int r = old_h; r < a->dims.h; ++r)
+    {
+        for (int c = 0; c < a->dims.w; ++c)
+        {
+            a->elems[rc_to_i(r, c, a->dims)] = b->elems[rc_to_i(r - old_h, c, b->dims)];
+        }
+    }
 }
 
 Matrix *trans_matrix(Matrix *m)
@@ -209,6 +226,21 @@ Matrix *trans_matrix(Matrix *m)
         for (int c = 0; c < m->dims.w; ++c)
         {
             out->elems[rc_to_i(c, r, out->dims)] = m->elems[rc_to_i(r, c, m->dims)];
+        }
+    }
+
+    return out;
+}
+
+Matrix *sum_cols_matrix(Matrix *m)
+{
+    Matrix *out = zeros_matrix(1, m->dims.w);
+
+    for (int c = 0; c < m->dims.w; ++c)
+    {
+        for (int r = 0; r < m->dims.h; ++r)
+        {
+            out->elems[rc_to_i(0, c, out->dims)] += m->elems[rc_to_i(r, c, m->dims)];
         }
     }
 

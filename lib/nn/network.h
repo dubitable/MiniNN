@@ -30,6 +30,6 @@ void add_a_layer_network(Network *, Activation);
 void forward_network(Network *, Matrix *);
 void backward_network(Network *, Matrix *, float);
 
-void fit_network(Network *, DatasetSplit *, float, float);
+void fit_network(Network *, DatasetSplit *, float, float, int);
 
 #endif

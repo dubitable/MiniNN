@@ -11,10 +11,10 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < 50; ++i)
     {
-        fprintf(fptr, "0,0;0\n");
-        fprintf(fptr, "0,1;1\n");
-        fprintf(fptr, "1,0;1\n");
-        fprintf(fptr, "1,1;0\n");
+        fprintf(fptr, "0,0;1, 0\n");
+        fprintf(fptr, "0,1;0, 1\n");
+        fprintf(fptr, "1,0;0, 1\n");
+        fprintf(fptr, "1,1;1, 0\n");
     }
 
     return 0;

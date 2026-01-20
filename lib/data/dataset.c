@@ -53,12 +53,16 @@ void free_dataset(Dataset *dataset)
     free(dataset);
 }
 
-DatasetSplit *train_test_val(Dataset *dataset, float train_prop, float test_prop)
+DatasetSplit *train_test_val(Dataset *dataset, float train_prop, float test_prop, int is_random)
 {
     int train_count = dataset->count * train_prop;
     int test_count = dataset->count * test_prop;
 
-    int *order = generate_random_order(dataset->count);
+    int *order = generate_order(dataset->count);
+
+    if (is_random)
+        shuffle(order, dataset->count);
+
     int i = 0;
 
     DatasetSplit *s = malloc(sizeof(DatasetSplit));

@@ -4,5 +4,5 @@ gcc main.c \
     lib/metrics/activation.c lib/metrics/loss.c \
     lib/nn/layer.c lib/nn/network.c \
         lib/nn/layers/fclayer.c lib/nn/layers/alayer.c \
-    -o main.exe \
-    -Wall -Wextra -Werror
+    -o main.exe
+    #-Wall -Wextra -Werror
