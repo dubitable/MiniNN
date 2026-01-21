@@ -55,15 +55,7 @@ Matrix *backward_a_layer(ALayer *l, Matrix *output_error)
 
 void print_a_layer(ALayer *l)
 {
-    switch (l->activation_type)
-    {
-    case ACTIVATION_RELU:
-        printf("ReLU");
-        break;
-
-    default:
-        break;
-    }
+    print_activation(l->activation_type);
 }
 
 void free_a_layer(ALayer *l)

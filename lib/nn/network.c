@@ -130,7 +130,7 @@ void train_batch_network(Network *net, Dataset *dataset, float lr, int batch_siz
         Batch batch = make_batch(dataset, i, ((b + 1) * batch_size - 1), order);
 
         forward_network(net, batch.batch_x);
-        backward_network(net, batch.batch_y, lr);
+        backward_network(net, batch.batch_y, lr / batch_size);
 
         free_matrix(batch.batch_x);
         free_matrix(batch.batch_y);
@@ -229,7 +229,9 @@ void print_network(Network *net)
     printf("-----------------\n");
     printf("| Network Info\n");
     printf("|- %d params (~%d B)\n", params, (int)(params * sizeof(float)));
-    printf("|- loss: %s\n", loss_names[net->loss_type]);
+    printf("|- loss: ");
+    print_loss(net->loss_type);
+    printf("\n");
     printf("|- x -> ");
 
     print_layer(net->layers[0]);

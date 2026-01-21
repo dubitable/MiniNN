@@ -16,7 +16,7 @@
 
 int main()
 {
-    srand(20);
+    srand(time(NULL));
 
     Dataset *dataset = from_file_dataset("./examples/xor/xor.mini");
 
@@ -25,7 +25,7 @@ int main()
 
     DatasetSplit *split = train_test_val(dataset, 0.8, 0.1, 1);
 
-    Network *net = init_network(input_size, output_size, LOSS_MSE);
+    Network *net = init_network(input_size, output_size, LOSS_CE);
 
     add_fc_layer_network(net, 100);
     add_a_layer_network(net, ACTIVATION_RELU);
@@ -40,7 +40,7 @@ int main()
 
     print_network(net);
 
-    fit_network(net, split, 20, 0.001f, 1);
+    fit_network(net, split, 100, 0.01f, 1);
 
     free_datasetsplit(split);
     free_network(net);

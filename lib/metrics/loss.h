@@ -8,10 +8,9 @@ Matrix *mse_prime(Matrix *, Matrix *);
 
 typedef enum
 {
-    LOSS_MSE
+    LOSS_MSE,
+    LOSS_CE
 } Loss;
-
-extern char *loss_names[];
 
 typedef struct
 {
@@ -20,5 +19,7 @@ typedef struct
 } LossFns;
 
 LossFns use_loss(Loss);
+
+void print_loss(Loss);
 
 #endif
