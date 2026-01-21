@@ -48,7 +48,7 @@ Matrix *backward_a_layer(ALayer *l, Matrix *output_error)
 
     Matrix *new_error = mul_matrices(aprime, output_error);
 
-    free(aprime);
+    free_matrix(aprime);
 
     return new_error;
 }

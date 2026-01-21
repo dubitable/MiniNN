@@ -12,7 +12,7 @@ float mse_loss(Matrix *y_true, Matrix *y_est)
     sq_matrix(diff);
 
     float sum = sum_matrix(diff);
-    free(diff);
+    free_matrix(diff);
     return sum / (y_true->dims.h * y_true->dims.w);
 }
 
